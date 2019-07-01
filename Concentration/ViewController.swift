@@ -4,6 +4,7 @@
 //
 //  Created by smallcase_kolhar730 on 28/06/19.
 //  Copyright © 2019 smallcase_kolhar730. All rights reserved.
+
 // TODO: add Date and scoring - extra credit
 
 import UIKit
@@ -14,13 +15,21 @@ class ViewController: UIViewController {
     
     var flipCount = 0 {
         didSet {
-            flipCounterLabel.text = "Flips: " + String(flipCount)
+            flipCounterLabel.text = String(flipCount)
         }
     }
     
     @IBOutlet var concentrationCards: [UIButton]!
     
+    @IBAction func generateNewGame(_ sender: UIButton) {
+        self.viewDidLoad()
+        self.viewWillAppear(true)
+        self.view.setNeedsLayout()
+        initGame.clearGame()
+    }
+    
     @IBOutlet weak var flipCounterLabel: UILabel!
+    
     @IBOutlet weak var scoreDisplay: UILabel!
     
     var emojis = Dictionary<Int, String>()
@@ -29,7 +38,6 @@ class ViewController: UIViewController {
         self.flipCount += 1;
         
         if let cardNumber = concentrationCards.firstIndex(of: sender) {
-            NSLog("Card Number: \(cardNumber)")
             
             initGame.chooseCard(at: cardNumber)
             
@@ -43,6 +51,9 @@ class ViewController: UIViewController {
     
     
     func updateViewFromModel () {
+        
+        self.scoreDisplay.text = "\(initGame.scoreKeeper / 2)"
+        
         for index in concentrationCards.indices {
             let button = concentrationCards[index]
             let card = initGame.cards[index]
@@ -52,12 +63,15 @@ class ViewController: UIViewController {
                 button.backgroundColor = .brown
             } else {
                 button.setTitle("", for: UIControl.State.normal)
-                button.backgroundColor = card.isMatched ? .blue : .orange
+                button.backgroundColor = card.isMatched ? .black : .orange
+                if card.isMatched {
+                    button.isEnabled = false
+                }
             }
         }
     }
     
-    var emojiChoices = ["😂","😀"]
+    var emojiChoices = ["😂","😀", "😁", "🧐", "🤖", "😈", "🦷", "🙈", "⚽️", "🎾"]
     
     func emoji(for card: Card) -> String {
         
@@ -71,5 +85,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        scoreDisplay.text = "0"
+        flipCounterLabel.text = "0"
     }
 }

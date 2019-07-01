@@ -12,6 +12,10 @@ class Concentration {
     
     var theOnlyFaceUpCard: Int?
     
+    var scoreKeeper: Int = 0
+    
+    var prevDateMatched = Date()
+    
     init(numberOfPairsOfCards: Int) {
         
         for _ in 1...numberOfPairsOfCards {
@@ -26,6 +30,21 @@ class Concentration {
     
     var cards = [Card]()
     
+    func clearGame () {
+        cards = []
+        theOnlyFaceUpCard = nil
+    }
+    
+    func scoreGiver(start: Date, end: Date) -> Int {
+        var score = 0
+        if (Int(DateInterval(start: start, end: end).duration) < 10) {
+            score = 5
+        } else {
+            score = 1
+        }
+        return score
+    }
+    
     func chooseCard(at index: Int) {
         if !cards[index].isMatched {
             if let matchIndex = theOnlyFaceUpCard, matchIndex != index {
@@ -33,6 +52,10 @@ class Concentration {
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
                     
+                    cards[matchIndex].dateMatched = Date()
+                    cards[index].dateMatched = cards[matchIndex].dateMatched
+                    self.scoreKeeper += scoreGiver(start: self.prevDateMatched, end: cards[matchIndex].dateMatched)
+                    self.prevDateMatched = cards[matchIndex].dateMatched
                 }
                 cards[index].isFaceUp = true
                 theOnlyFaceUpCard = nil
@@ -46,6 +69,5 @@ class Concentration {
                 theOnlyFaceUpCard = index
             }
         }
-        
     }
 }
