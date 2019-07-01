@@ -10,37 +10,63 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    var flipCount : Int = 0
+    lazy var initGame : Concentration = Concentration(numberOfPairsOfCards: (concentrationCards.count + 1) / 2)
     
-    @IBOutlet var concentrationCards: Array<UIButton>!
+    var flipCount = 0 {
+        didSet {
+            flipCounterLabel.text = "Flips: " + String(flipCount)
+        }
+    }
+    
+    @IBOutlet var concentrationCards: [UIButton]!
     
     @IBOutlet weak var flipCounterLabel: UILabel!
     @IBOutlet weak var scoreDisplay: UILabel!
     
-    var emojis = ["😂", "😀", "😂","😀"]
+    var emojis = Dictionary<Int, String>()
     
     @IBAction func touchCard(_ sender: UIButton) {
         self.flipCount += 1;
         
         if let cardNumber = concentrationCards.firstIndex(of: sender) {
             NSLog("Card Number: \(cardNumber)")
-            self.flipCard(withEmoji: emojis[cardNumber], on: sender)
+            
+            initGame.chooseCard(at: cardNumber)
+            
+            updateViewFromModel()
         }
         else {
             NSLog("Card not found!")
         }
     }
     
-    func flipCard(withEmoji emoji: String, on button: UIButton) {
-        if (button.currentTitle == emoji) {
-            button.setTitle("", for: UIControl.State.normal)
-            button.backgroundColor = .orange
-            flipCounterLabel.text = "Flips: " + String(flipCount)
-        } else {
-            button.setTitle(emoji, for: UIControl.State.normal)
-            button.backgroundColor = .brown
-            flipCounterLabel.text = "Flips: " + String(flipCount)
+    
+    
+    func updateViewFromModel () {
+        for index in concentrationCards.indices {
+            let button = concentrationCards[index]
+            let card = initGame.cards[index]
+            
+            if (card.isFaceUp) {
+                button.setTitle(emoji(for: card), for: UIControl.State.normal)
+                button.backgroundColor = .brown
+            } else {
+                button.setTitle("", for: UIControl.State.normal)
+                button.backgroundColor = card.isMatched ? .blue : .orange
+            }
         }
+    }
+    
+    var emojiChoices = ["😂","😀"]
+    
+    func emoji(for card: Card) -> String {
+        
+        if emojis[card.identifier] == nil, emojiChoices.count > 0 {
+            let randomIndex = Int(arc4random_uniform(UInt32(emojiChoices.count)))
+            emojis[card.identifier] = emojiChoices.remove(at: randomIndex)
+        }
+        
+        return emojis[card.identifier] ?? "?"
     }
     
     override func viewDidLoad() {
