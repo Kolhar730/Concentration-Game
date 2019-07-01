@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     
     func updateViewFromModel () {
         
-        self.scoreDisplay.text = "\(initGame.scoreKeeper / 2)"
+        self.scoreDisplay.text = "\(initGame.scoreKeeper)"
         
         for index in concentrationCards.indices {
             let button = concentrationCards[index]
