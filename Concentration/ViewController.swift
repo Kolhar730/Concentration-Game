@@ -22,9 +22,7 @@ class ViewController: UIViewController {
     @IBOutlet var concentrationCards: [UIButton]!
     
     @IBAction func generateNewGame(_ sender: UIButton) {
-        self.viewDidLoad()
-        self.viewWillAppear(true)
-        self.view.setNeedsLayout()
+    
         initGame.clearGame()
     }
     
