@@ -14,6 +14,7 @@
 		550F09DF22C6837500C50049 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 550F09DD22C6837500C50049 /* LaunchScreen.storyboard */; };
 		550F09E722C9330700C50049 /* Concentration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550F09E622C9330700C50049 /* Concentration.swift */; };
 		550F09E922C9331E00C50049 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550F09E822C9331E00C50049 /* Card.swift */; };
+		552FEB3822CB937A000715E7 /* ThemeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552FEB3722CB937A000715E7 /* ThemeGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		550F09E022C6837500C50049 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		550F09E622C9330700C50049 /* Concentration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concentration.swift; sourceTree = "<group>"; };
 		550F09E822C9331E00C50049 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		552FEB3722CB937A000715E7 /* ThemeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				550F09DB22C6837500C50049 /* Assets.xcassets */,
 				550F09DD22C6837500C50049 /* LaunchScreen.storyboard */,
 				550F09E022C6837500C50049 /* Info.plist */,
+				552FEB3722CB937A000715E7 /* ThemeGenerator.swift */,
 			);
 			path = Concentration;
 			sourceTree = "<group>";
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				550F09D722C6837400C50049 /* ViewController.swift in Sources */,
+				552FEB3822CB937A000715E7 /* ThemeGenerator.swift in Sources */,
 				550F09D522C6837400C50049 /* AppDelegate.swift in Sources */,
 				550F09E722C9330700C50049 /* Concentration.swift in Sources */,
 				550F09E922C9331E00C50049 /* Card.swift in Sources */,

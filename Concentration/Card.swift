@@ -1,10 +1,5 @@
 //
 //  Card.swift
-//  Concentration
-//
-//  Created by smallcase_kolhar730 on 30/06/19.
-//  Copyright © 2019 smallcase_kolhar730. All rights reserved.
-//
 
 import Foundation
 
@@ -12,7 +7,7 @@ struct Card {
     var isFaceUp = false
     var isMatched = false
     var identifier: Int
-    var dateMatched = Date()
+    var dateMatched: Date = Date()
     
     static var indentifierFactory = 0
     

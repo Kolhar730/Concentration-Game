@@ -1,17 +1,11 @@
 //
 //  ViewController.swift
-//  Concentration
-//
-//  Created by smallcase_kolhar730 on 28/06/19.
-//  Copyright © 2019 smallcase_kolhar730. All rights reserved.
-
-// TODO: add Date and scoring - extra credit
 
 import UIKit
 
 class ViewController: UIViewController {
     
-    lazy var initGame : Concentration = Concentration(numberOfPairsOfCards: (concentrationCards.count + 1) / 2)
+    lazy var game : Concentration = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
     
     var flipCount = 0 {
         didSet {
@@ -19,11 +13,23 @@ class ViewController: UIViewController {
         }
     }
     
+    lazy var emojiChoices = game.theme.getEmojis()
+    
     @IBOutlet var concentrationCards: [UIButton]!
     
     @IBAction func generateNewGame(_ sender: UIButton) {
-    
-        initGame.clearGame()
+        let tempGame = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
+        
+        self.game = tempGame
+        self.flipCount = 0
+        self.scoreDisplay.text = "\(0)"
+        self.view.backgroundColor = game.theme.getBGColor()
+        
+        for button in concentrationCards {
+            button.backgroundColor = game.theme.getFaceDownColor()
+        }
+        
+        self.view.setNeedsDisplay() // my magic wand!
     }
     
     @IBOutlet weak var flipCounterLabel: UILabel!
@@ -37,7 +43,7 @@ class ViewController: UIViewController {
         
         if let cardNumber = concentrationCards.firstIndex(of: sender) {
             
-            initGame.chooseCard(at: cardNumber)
+            game.chooseCard(at: cardNumber)
             
             updateViewFromModel()
         }
@@ -50,26 +56,24 @@ class ViewController: UIViewController {
     
     func updateViewFromModel () {
         
-        self.scoreDisplay.text = "\(initGame.scoreKeeper)"
+        self.scoreDisplay.text = "\(game.scoreKeeper)"
         
         for index in concentrationCards.indices {
             let button = concentrationCards[index]
-            let card = initGame.cards[index]
+            let card = game.cards[index]
             
             if (card.isFaceUp) {
                 button.setTitle(emoji(for: card), for: UIControl.State.normal)
-                button.backgroundColor = .brown
+                button.backgroundColor = game.theme.getFaceUpColor()
             } else {
                 button.setTitle("", for: UIControl.State.normal)
-                button.backgroundColor = card.isMatched ? .black : .orange
+                button.backgroundColor = card.isMatched ? game.theme.getBGColor() : game.theme.getFaceDownColor()
                 if card.isMatched {
                     button.isEnabled = false
                 }
             }
         }
     }
-    
-    var emojiChoices = ["😂","😀", "😁", "🧐", "🤖", "😈", "🦷", "🙈", "⚽️", "🎾"]
     
     func emoji(for card: Card) -> String {
         
@@ -78,7 +82,7 @@ class ViewController: UIViewController {
             emojis[card.identifier] = emojiChoices.remove(at: randomIndex)
         }
         
-        return emojis[card.identifier] ?? "?"
+        return emojis[card.identifier]!
     }
     
     override func viewDidLoad() {

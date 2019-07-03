@@ -1,14 +1,11 @@
 //
 //  Concentration.swift
-//  Concentration
-//
-//  Created by smallcase_kolhar730 on 30/06/19.
-//  Copyright © 2019 smallcase_kolhar730. All rights reserved.
-//
 
 import Foundation
 
 class Concentration {
+    
+    var theme : ThemeGenerator
     
     var theOnlyFaceUpCard: Int?
     
@@ -26,18 +23,14 @@ class Concentration {
         
         // Shuffling the cards
         cards.shuffle()
+        theme = ThemeGenerator()
     }
     
     var cards = [Card]()
     
-    func clearGame () {
-        cards = []
-        theOnlyFaceUpCard = nil
-    }
-    
     func scoreGiver(start: Date, end: Date) -> Int {
         var score = 0
-        if (Int(DateInterval(start: start, end: end).duration) < 10) {
+        if (Int(DateInterval(start: start, end: end).duration) < 5) {
             score = 5
         } else {
             score = 1
