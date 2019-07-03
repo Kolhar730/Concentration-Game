@@ -5,7 +5,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    lazy var game : Concentration = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
+    lazy var game : Concentration = Concentration(numberOfPairsOfCards: ((concentrationCards.count + 1) / 2) )
     
     var flipCount = 0 {
         didSet {
@@ -13,21 +13,31 @@ class ViewController: UIViewController {
         }
     }
     
-    lazy var emojiChoices = game.theme.getEmojis()
+    lazy var emojiChoices : [String] = self.game.theme.getEmojis()
+    
+    @IBOutlet weak var themeLabel: UILabel!
     
     @IBOutlet var concentrationCards: [UIButton]!
     
     @IBAction func generateNewGame(_ sender: UIButton) {
-        let tempGame = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
         
-        self.game = tempGame
-        self.flipCount = 0
-        self.scoreDisplay.text = "\(0)"
+        game = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
+        
+        flipCount = 0
+        
+        scoreDisplay.text = "\(0)"
+        
         self.view.backgroundColor = game.theme.getBGColor()
         
         for button in concentrationCards {
             button.backgroundColor = game.theme.getFaceDownColor()
+            button.setTitle("", for: UIControl.State.normal)
+            button.isEnabled = true
         }
+        
+        emojiChoices = game.theme.getEmojis()
+        
+        themeLabel.text = "Theme: " + game.theme.getThemeText()
         
         self.view.setNeedsDisplay() // my magic wand!
     }
@@ -39,11 +49,12 @@ class ViewController: UIViewController {
     var emojis = Dictionary<Int, String>()
     
     @IBAction func touchCard(_ sender: UIButton) {
-        self.flipCount += 1;
         
         if let cardNumber = concentrationCards.firstIndex(of: sender) {
             
             game.chooseCard(at: cardNumber)
+            
+            self.flipCount += 1
             
             updateViewFromModel()
         }
@@ -51,7 +62,6 @@ class ViewController: UIViewController {
             NSLog("Card not found!")
         }
     }
-    
     
     
     func updateViewFromModel () {
@@ -65,7 +75,9 @@ class ViewController: UIViewController {
             if (card.isFaceUp) {
                 button.setTitle(emoji(for: card), for: UIControl.State.normal)
                 button.backgroundColor = game.theme.getFaceUpColor()
+                button.isEnabled = false
             } else {
+                button.isEnabled = true
                 button.setTitle("", for: UIControl.State.normal)
                 button.backgroundColor = card.isMatched ? game.theme.getBGColor() : game.theme.getFaceDownColor()
                 if card.isMatched {
@@ -89,5 +101,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         scoreDisplay.text = "0"
         flipCounterLabel.text = "0"
+        themeLabel.text = "Click on New Game to play!"
     }
 }
