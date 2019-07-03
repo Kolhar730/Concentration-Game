@@ -19,8 +19,7 @@ class ViewController: UIViewController {
     
     @IBOutlet var concentrationCards: [UIButton]!
     
-    @IBAction func generateNewGame(_ sender: UIButton) {
-        
+    func startNewGame () {
         game = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
         
         flipCount = 0
@@ -40,6 +39,10 @@ class ViewController: UIViewController {
         themeLabel.text = "Theme: " + game.theme.getThemeText()
         
         self.view.setNeedsDisplay() // my magic wand!
+    }
+    
+    @IBAction func generateNewGame(_ sender: UIButton) {
+        self.startNewGame()
     }
     
     @IBOutlet weak var flipCounterLabel: UILabel!
@@ -99,8 +102,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.startNewGame()
         scoreDisplay.text = "0"
         flipCounterLabel.text = "0"
-        themeLabel.text = "Click on New Game to play!"
     }
 }
