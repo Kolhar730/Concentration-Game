@@ -1,109 +1,136 @@
-//
-//  ViewController.swift
+    //
+    //  ViewController.swift
 
-import UIKit
+    import UIKit
 
-class ViewController: UIViewController {
-    
-    lazy var game : Concentration = Concentration(numberOfPairsOfCards: ((concentrationCards.count + 1) / 2) )
-    
-    var flipCount = 0 {
-        didSet {
-            flipCounterLabel.text = String(flipCount)
-        }
-    }
-    
-    lazy var emojiChoices : [String] = self.game.theme.getEmojis()
-    
-    @IBOutlet weak var themeLabel: UILabel!
-    
-    @IBOutlet var concentrationCards: [UIButton]!
-    
-    func startNewGame () {
-        game = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
+    class ViewController: UIViewController {
         
-        flipCount = 0
+        lazy var game : Concentration = Concentration(numberOfPairsOfCards: ((concentrationCards.count + 1) / 2) )
         
-        scoreDisplay.text = "\(0)"
-        
-        self.view.backgroundColor = game.theme.getBGColor()
-        
-        for button in concentrationCards {
-            button.backgroundColor = game.theme.getFaceDownColor()
-            button.setTitle("", for: UIControl.State.normal)
-            button.isEnabled = true
+        var flipCount = 0 {
+            didSet {
+                flipCounterLabel.text = String(flipCount)
+            }
         }
         
-        emojiChoices = game.theme.getEmojis()
+        lazy var emojiChoices : [String] = self.game.theme.getEmojis()
         
-        themeLabel.text = "Theme: " + game.theme.getThemeText()
+        @IBOutlet weak var themeLabel: UILabel!
         
-        self.view.setNeedsDisplay() // my magic wand!
-    }
-    
-    @IBAction func generateNewGame(_ sender: UIButton) {
-        self.startNewGame()
-    }
-    
-    @IBOutlet weak var flipCounterLabel: UILabel!
-    
-    @IBOutlet weak var scoreDisplay: UILabel!
-    
-    var emojis = Dictionary<Int, String>()
-    
-    @IBAction func touchCard(_ sender: UIButton) {
+        @IBOutlet var concentrationCards: [UIButton]!
         
-        if let cardNumber = concentrationCards.firstIndex(of: sender) {
+        func startNewGame () {
+            game = Concentration(numberOfPairsOfCards: (self.concentrationCards.count + 1) / 2)
             
-            game.chooseCard(at: cardNumber)
+            flipCount = 0
             
-            self.flipCount += 1
+            scoreDisplay.text = "\(0)"
             
-            updateViewFromModel()
-        }
-        else {
-            NSLog("Card not found!")
-        }
-    }
-    
-    
-    func updateViewFromModel () {
-        
-        self.scoreDisplay.text = "\(game.scoreKeeper)"
-        
-        for index in concentrationCards.indices {
-            let button = concentrationCards[index]
-            let card = game.cards[index]
+            self.view.backgroundColor = game.theme.getBGColor()
             
-            if (card.isFaceUp) {
-                button.setTitle(emoji(for: card), for: UIControl.State.normal)
-                button.backgroundColor = game.theme.getFaceUpColor()
-                button.isEnabled = false
-            } else {
-                button.isEnabled = true
+            for button in concentrationCards {
+                button.backgroundColor = game.theme.getFaceDownColor()
                 button.setTitle("", for: UIControl.State.normal)
-                button.backgroundColor = card.isMatched ? game.theme.getBGColor() : game.theme.getFaceDownColor()
-                if card.isMatched {
+                button.isEnabled = true
+            }
+            
+            emojiChoices = game.theme.getEmojis()
+            
+            themeLabel.text = "Theme: " + game.theme.getThemeText()
+            
+            self.view.setNeedsDisplay() // my magic wand!
+        }
+        
+        @IBAction func generateNewGame(_ sender: UIButton) {
+            self.startNewGame()
+        }
+        
+        @IBOutlet weak var flipCounterLabel: UILabel!
+        
+        @IBOutlet weak var scoreDisplay: UILabel!
+        
+        var emojis = Dictionary<Int, String>()
+        
+        @IBAction func touchCard(_ sender: UIButton) {
+            
+            if let cardNumber = concentrationCards.firstIndex(of: sender) {
+                
+                game.chooseCard(at: cardNumber)
+                
+                self.flipCount += 1
+                
+                updateViewFromModel()
+            }
+            else {
+                NSLog("Card not found!")
+            }
+        }
+        
+        
+        func updateViewFromModel () {
+            
+            var isAllCardsMatched: Bool = false
+            
+            self.scoreDisplay.text = "\(game.scoreKeeper)"
+            
+            for index in concentrationCards.indices {
+                let button = concentrationCards[index]
+                let card = game.cards[index]
+                
+                if (card.isFaceUp) {
+                    button.setTitle(emoji(for: card), for: UIControl.State.normal)
+                    button.backgroundColor = game.theme.getFaceUpColor()
                     button.isEnabled = false
+                } else {
+                    button.isEnabled = true
+                    button.setTitle("", for: UIControl.State.normal)
+                    button.backgroundColor = card.isMatched ? game.theme.getBGColor() : game.theme.getFaceDownColor()
+                    if card.isMatched {
+                        button.isEnabled = false
+                    }
+                }
+            }
+            
+            if (!isAllCardsMatched) {
+                for index in concentrationCards.indices {
+                    if game.cards[index].isMatched {
+                        isAllCardsMatched = true
+                        continue
+                    } else {
+                        isAllCardsMatched = false
+                        break
+                    }
+                }
+                if isAllCardsMatched == true {
+                    let alert = UIAlertController(title: "Woohoo! \nYou completed the game!", message: "#Flips: \(self.flipCount) \n Score: \(self.game.scoreKeeper)", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Start a New Game!", style: .default, handler: {
+                        action in
+                        switch action.style {
+                        case .default:
+                            self.startNewGame()
+                            break
+                        default:
+                            print("Not a valid action")
+                        }}))
+                    self.present(alert, animated: true, completion: nil)
                 }
             }
         }
-    }
-    
-    func emoji(for card: Card) -> String {
         
-        if emojis[card.identifier] == nil, emojiChoices.count > 0 {
-            let randomIndex = Int(arc4random_uniform(UInt32(emojiChoices.count)))
-            emojis[card.identifier] = emojiChoices.remove(at: randomIndex)
+        func emoji(for card: Card) -> String {
+            
+            if emojis[card.identifier] == nil, emojiChoices.count > 0 {
+                let randomIndex = Int(arc4random_uniform(UInt32(emojiChoices.count)))
+                emojis[card.identifier] = emojiChoices.remove(at: randomIndex)
+            }
+            
+            return emojis[card.identifier]!
         }
         
-        return emojis[card.identifier]!
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            self.startNewGame()
+            scoreDisplay.text = "0"
+            flipCounterLabel.text = "0"
+        }
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.startNewGame()
-        scoreDisplay.text = "0"
-        flipCounterLabel.text = "0"
-    }
-}
